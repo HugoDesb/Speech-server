@@ -129,7 +129,7 @@ module.exports = {
      * @param {String} gender 
      * @param {CallableFunction} cb 
      */
-    addSample : function(filename, text, age, gender, geo, cb){
+    addSample : function(filename, text, age, gender, geo_lattitude, geo_longitude, cb){
         var sampleToAdd = new SampleModel({
             filename:filename,
             text:text,
@@ -137,10 +137,8 @@ module.exports = {
             down_votes: 0,
             gender:gender,
             age:age,
-            geo:{
-                lattitude: geo.lattitude,
-                longitude: geo.longitude
-            }
+            geo_lattitude:String,
+            geo_longitude: String
         });
         sampleToAdd.save(function(err){
             if(err){

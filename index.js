@@ -9,7 +9,8 @@ var fs = require('fs');
 
 var bodyParser = require('body-parser');
 
-var dataUserLayer = require('./dataUserLayer.js')
+var dataSentenceLayer = require('./dataSentenceLayer.js');
+var dataUserLayer = require('./dataUserLayer.js');
 var dataAudioLayer = require('./dataAudioLayer.js');
 
 var app = express();
@@ -90,7 +91,31 @@ app.post('/api/connect/', function (req, res) {
     }
 });
 
+/***
+ * =====================================================================================
+ * 
+ *                                  SENTENCE SILO
+ * 
+ * =====================================================================================
+ */
 
+/**
+ * Obtient X enregistrements
+ */
+app.get('/api/sentence/:sentences_number', function(req, res){
+    if(!req.params.sentences_number){
+        res.send({
+            success:false,
+            error:{
+                name :'SENTENCES_NUMBER_IS_MISSING'
+            }
+        });
+    }else{
+        dataSentenceLayer.getSentences(req.params.samples_number, function(ret){
+            res.send(ret);
+        });
+    }
+})
 
 /***
  * =====================================================================================
@@ -167,11 +192,9 @@ app.post('/api/sample/', function(req, res){
                             lattitude : req.body.geo_lattitude,
                             longitude : req.body.geo_longitude,
                         }
-                        dataAudioLayer.addSample(filename, req.body.text, req.body.age, req.body.gender, geo, function(ret){
-                            if(ret.success){
-                                //Enlever la phrase du dico de référence
-                            }
-                            res.send(ret);
+                        dataAudioLayer.addSample(filename, req.body.text, req.body.age, req.body.gender, req.body.geo_lattitude,req.body.geo_longitude,
+                            function(ret){
+                                res.send(ret);
                         });
                     }else{
                         res.send({
