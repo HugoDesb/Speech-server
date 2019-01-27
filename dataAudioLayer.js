@@ -78,7 +78,7 @@ module.exports = {
         SampleModel.updateOne({"_id": audio_id}, {$inc :{"up_votes":1}},function(err, res){
             if(err){
                 throw err;
-            }else if(res.modifiedCount != 1){
+            }else if(res.nModified != 1){
                 cb({
                     success : false,
                     error : {
@@ -104,7 +104,7 @@ module.exports = {
         SampleModel.updateOne({"_id": audio_id}, {$inc :{"down_votes":1}},function(err, res){
             if(err){
                 throw err;
-            }else if(res.modifiedCount != 1){
+            }else if(res.nModified != 1){
                 cb({
                     success : false,
                     error : {
@@ -163,7 +163,7 @@ module.exports = {
             console.dir(results);
             if (err) {
                 throw err;
-            }else if(!results  || results.length <= NbrDoc){
+            }else if(!results  || results.length < NbrDoc){
                 cb({
                     success : true,
                     error : {

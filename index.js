@@ -2,6 +2,8 @@ var express = require('express');
 var path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 var uuidv4 = require("uuid/v4");
+const fileUpload = require('express-fileupload');
+var fs = require('fs');
 //var generator = require('generate-password');
 
 
@@ -15,6 +17,9 @@ var port = 8095;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.raw({type: 'audio/wav', limit:'50mb'}));
+app.use(fileUpload({ safeFileNames: true, preserveExtension: true }))
 
 
 
@@ -32,6 +37,7 @@ app.use(function(req, res, next){
     res.setHeader("Access-Control-Allow-Headers", "X-requested-with,content-type");
 
     next();
+
 });
 
 
@@ -125,9 +131,10 @@ app.put('/api/sample/:audio_id', function(req,res){
  * INSERT A NEW SAMPLE
  * 
  * Expected res.body format 
- * @data {text, geo:{lattitude, longitude}, user_id}
+ * {text, geo_lattitude, geo_longitude, user_id}
  */
 app.post('/api/sample/', function(req, res){
+    //console.dir(req.files);
     if(!req.files.sample){
         res.send({
             success:false,
@@ -135,7 +142,7 @@ app.post('/api/sample/', function(req, res){
                 name :'SAMPLE_NOT_FOUND'
             }
         });
-    }else if(!req.body.text || !req.body.geo.lattitude || !req.body.geo.longitude || !req.body.user_id){
+    }else if(!req.body.text || !req.body.geo_lattitude || !req.body.geo_longitude || !req.body.user_id){
         res.send({
             success:false,
             error:{
@@ -148,6 +155,48 @@ app.post('/api/sample/', function(req, res){
         // Set where the file should actually exists - in this case it is in the "audio" directory.
         var filename = 'sample-' + uuidv4() + '.mp3'
         target_path = './audio/' + filename;
+
+        req.files.sample.mv('./audio/' + filename , function(err) {
+            if(err){
+                throw err;
+            }else{
+                dataUserLayer.getGenderAndAge(req.body.user_id, function(ret1){
+                    if(ret1.success){
+                        var geo = {
+                            lattitude : req.body.geo_lattitude,
+                            longitude : req.body.geo_longitude,
+                        }
+                        dataAudioLayer.addSample(filename, req.body.text, req.body.age, req.body.gender, geo, function(ret){
+                            if(ret.success){
+                                //Enlever la phrase du dico de référence
+                            }
+                            res.send(ret);
+                        });
+                    }else{
+                        res.send({
+                            success:false,
+                            error:{
+                                name :'USER_NOT_FOUND',
+                                info: ret1
+                            }
+                        });
+                    }
+                })
+            }
+    
+       });
+       /*
+    
+        // copy the file to a new location
+        fs.rename(tmp_path, target_path, function (err) {
+            if (err) throw err;
+            // you may respond with another html page
+            
+            //res.write('File uploaded and moved!');
+            //res.end();
+        });
+
+        /*
         ffmpeg(tmp_path)
         .toFormat('mp3')
         .on('error', (err) => {
@@ -163,29 +212,16 @@ app.post('/api/sample/', function(req, res){
             console.log('Processing: ' + progress.targetSize + ' KB converted');
         })
         .on('end', () => {
-            dataUserLayer.getGenderAndAge(req.body.user_id, function(ret1){
-                if(ret1.success){
-                    dataAudioLayer.addSample(filename, req.body.text, req.body.age, req.body.gender, req.body.geo, function(ret){
-                        if(ret.success){
-                            //Enlever la phrase du dico de référence
-                        }
-                        res.send(ret);
-                    });
-                }else{
-                    res.send({
-                        success:false,
-                        error:{
-                            name :'USER_NOT_FOUND',
-                            info: ret1
-                        }
-                    });
-                }
-            })
+            
         })
         .save(target_path);//path where you want to save your file
+        */
     }
 })
 
+/**
+ * 
+ */
 app.get('/api/sample/:samples_number', function(req, res){
     if(!req.params.samples_number){
         res.send({
@@ -196,7 +232,7 @@ app.get('/api/sample/:samples_number', function(req, res){
         });
     }else{
         dataAudioLayer.getSamples(req.params.samples_number, function(ret){
-            console.dir(ret);
+            res.send(ret);
         });
     }
 })
