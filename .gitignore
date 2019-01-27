@@ -88,3 +88,4 @@ typings/
 audio/
 
 # End of https://www.gitignore.io/api/node
+npm-debug.log
