@@ -24,6 +24,7 @@ app.use(fileUpload({ safeFileNames: true, preserveExtension: true }))
 
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use("/audio", express.static(path.join(__dirname, 'audio')));
 
 
 app.use(function(req, res, next){
@@ -153,7 +154,7 @@ app.post('/api/sample/', function(req, res){
         // Get the temporary location of the file
         var tmp_path = req.files.sample.path;
         // Set where the file should actually exists - in this case it is in the "audio" directory.
-        var filename = 'sample-' + uuidv4() + '.mp3'
+        var filename = 'sample-' + uuidv4() + '.wav'
         target_path = './audio/' + filename;
 
         req.files.sample.mv('./audio/' + filename , function(err) {
@@ -185,42 +186,11 @@ app.post('/api/sample/', function(req, res){
             }
     
        });
-       /*
-    
-        // copy the file to a new location
-        fs.rename(tmp_path, target_path, function (err) {
-            if (err) throw err;
-            // you may respond with another html page
-            
-            //res.write('File uploaded and moved!');
-            //res.end();
-        });
-
-        /*
-        ffmpeg(tmp_path)
-        .toFormat('mp3')
-        .on('error', (err) => {
-            res.send({
-                success:false,
-                error:{
-                    name :'ERROR_WHILE_CONVERTING_FILE_TO_MP3',
-                    info: err
-                }
-            });
-        })
-        .on('progress', (progress) => {
-            console.log('Processing: ' + progress.targetSize + ' KB converted');
-        })
-        .on('end', () => {
-            
-        })
-        .save(target_path);//path where you want to save your file
-        */
     }
 })
 
 /**
- * 
+ * Obtient X enregistrements
  */
 app.get('/api/sample/:samples_number', function(req, res){
     if(!req.params.samples_number){

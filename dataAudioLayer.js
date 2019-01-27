@@ -160,7 +160,6 @@ module.exports = {
     getSamples : function(NbrDoc, cb){
         // Parameters match parameters for "find"
         SampleModel.findRandom({}, {}, {limit: NbrDoc}, function(err, results) {
-            console.dir(results);
             if (err) {
                 throw err;
             }else if(!results  || results.length < NbrDoc){
