@@ -57,10 +57,8 @@ var SampleSchema = Schema({
         type: String,
         enum: ['M', 'F']
     },
-    geo: {
-        lattitude : String,
-        longitude : String
-    }
+    geo_lattitude: String,
+    geo_longitude: String
 });
 SampleSchema.plugin(random); // plugin for retreiving documents randomly
 
@@ -137,8 +135,8 @@ module.exports = {
             down_votes: 0,
             gender:gender,
             age:age,
-            geo_lattitude:String,
-            geo_longitude: String
+            geo_lattitude:geo_lattitude,
+            geo_longitude: geo_longitude
         });
         sampleToAdd.save(function(err){
             if(err){

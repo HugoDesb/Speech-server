@@ -100,7 +100,7 @@ app.post('/api/connect/', function (req, res) {
  */
 
 /**
- * Obtient X enregistrements
+ * Obtient X phrases
  */
 app.get('/api/sentence/:sentences_number', function(req, res){
     if(!req.params.sentences_number){
@@ -229,6 +229,22 @@ app.get('/api/sample/:samples_number', function(req, res){
         });
     }
 })
+
+/**
+ * Obtient une archive contenant l'intégralité des enregistrements
+ */
+app.get('/api/sample/download', function(req, res){
+    // get positive via dataLayer
+    // create positive folder with samples
+    // generate CSV 
+    // mongoexport -h localhost -d speech -c samples --type=csv --fields filename,text,up_votes,down_votes,age,gender,geo_lattitude,geo_longitude -q '{"up_votes":{"$gt":5}, "down_votes":{"$lt": 2}}' --out positive.csv
+    // get negative
+    // generate CSV 
+    // create negative folder with samples
+    // get other
+    // generate CSV 
+    // create other folder with samples
+});
 
 
 ////////////////
