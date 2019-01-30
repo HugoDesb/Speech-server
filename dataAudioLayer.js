@@ -9,7 +9,6 @@ var random = require('mongoose-simple-random');
 var bodyParser = require('body-parser');
 
 var app = express();
-var port = 8190;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -38,7 +37,7 @@ var Schema = mongoose.Schema;
 var uuidv4 = require("uuid/v4");
 
 
-mongoose.connect('mongodb://localhost/speech', function (err) {
+mongoose.connect('mongodb://devUser:bla1bla1@ds151461.mlab.com:51461/speech-server-polytech', function (err) {
     if(err){
         throw err;
     }else{
