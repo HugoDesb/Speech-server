@@ -187,7 +187,7 @@ app.post('/api/sample/', function(req, res){
         req.files.sample.mv(tmp_path , function(err) {
             console.log("HOP");
             if(err){
-                throw err;
+                console.log(err);
             }else{
                 console.log("HOP");
                 ffmpeg.ffprobe(tmp_path, function(err, metadata){
