@@ -176,7 +176,7 @@ app.post('/api/sample/', function(req, res){
             }
         });
     }else{
-        
+        console.dir(req.files.sample);
         // Get the temporary location of the file
         // Set where the file should actually exists - in this case it is in the "audio" directory.
         var filename = 'sample-' + uuidv4() + '.mp3';
