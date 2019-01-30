@@ -190,14 +190,14 @@ app.post('/api/sample/', function(req, res){
                 console.log(err);
             }else{
                 console.log("HOP");
-                ffmpeg.ffprobe(tmp_path, function(err, metadata){
+                ffmpeg.ffprobe(filename, function(err, metadata){
                     console.log("HOP");
                     if(err){
                         console.log(err);
                     }
                     var duration = metadata.format.duration;
                     console.log("HOP");
-                    ffmpeg(tmp_path)
+                    ffmpeg(filename)
                         // convert to mp3
                         .audioCodec('libmp3lame')
                         // setup event handlers
