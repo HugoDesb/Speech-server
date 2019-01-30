@@ -176,28 +176,52 @@ app.post('/api/sample/', function(req, res){
             }
         });
     }else{
-        console.dir(req.files.sample);
+
+
         // Get the temporary location of the file
         // Set where the file should actually exists - in this case it is in the "audio" directory.
         var filename = 'sample-' + uuidv4() + '.mp3';
         var tmp_path = './tmp/' + filename;
         var target_path = './audio/' + filename;
 
-        console.log("HOP");
         req.files.sample.mv(filename , function(err) {
-            console.log("HOP");
             if(err){
                 console.log(err);
             }else{
-                console.log("HOP");
+                dataUserLayer.getGenderAgeAndLanguage(req.body.user_id, function(ret1){
+                    if(ret1.success){
+                        // TODO : Compute SNR
+
+                        dataAudioLayer.addSample(filename, req.body.text, ret1.data.age, ret1.data.gender, 
+                                                req.body.geo_lattitude,req.body.geo_longitude, ret1.data.language,
+                            function(ret){
+                                res.send(ret);
+                        });
+                    }else{
+                        res.send({
+                            success:false,
+                            error:{
+                                name :'USER_NOT_FOUND',
+                                info: ret1
+                            }
+                        });
+                    }
+                })
+            }
+        });
+
+
+        /*
+        req.files.sample.mv(filename , function(err) {
+            if(err){
+                console.log(err);
+            }else{
                 ffmpeg.ffprobe(filename, function(err, metadata){
-                    console.log("HOP");
                     if(err){
                         console.log(err);
                     }
                     console.dir(metadata);
                     var duration = metadata.format.duration;
-                    console.log("HOP");
                     ffmpeg(filename)
                         // convert to mp3
                         .audioCodec('libmp3lame')
@@ -231,6 +255,7 @@ app.post('/api/sample/', function(req, res){
                 });
             }
        });
+       */
     }
 })
 
