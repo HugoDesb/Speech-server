@@ -59,13 +59,13 @@ app.use(function(req, res, next){
  */
 app.post('/api/users/', function(req,res){
 
-    if(!req.body.username || !req.body.password || !req.body.gender || !req.body.age){
+    if(!req.body.username || !req.body.password || !req.body.gender || !req.body.age || !req.body.language){
         res.send({
             success:false,
             error:{name : 'ONE_OR_MORE_FIELD_IS_EMPTY'}
         });
     }else{
-        dataUserLayer.addAccount(req.body.username, req.body.password, req.body.gender, req.body.age, function(ret){
+        dataUserLayer.addAccount(req.body.username, req.body.password, req.body.gender, req.body.age, req.body.language, function(ret){
             res.send(ret);
         });
     }
@@ -102,16 +102,16 @@ app.post('/api/connect/', function (req, res) {
 /**
  * Obtient X phrases
  */
-app.get('/api/sentence/:sentences_number', function(req, res){
-    if(!req.params.sentences_number){
+app.get('/api/sentence/:sentences_number/:language', function(req, res){
+    if(!req.params.sentences_number || !req.params.language){
         res.send({
             success:false,
             error:{
-                name :'SENTENCES_NUMBER_IS_MISSING'
+                name :'SENTENCES_NUMBER_OR_LANGUAGE_IS_MISSING'
             }
         });
     }else{
-        dataSentenceLayer.getSentences(req.params.samples_number, function(ret){
+        dataSentenceLayer.getSentences(req.params.samples_number, req.params.language, function(ret){
             res.send(ret);
         });
     }
@@ -186,13 +186,9 @@ app.post('/api/sample/', function(req, res){
             if(err){
                 throw err;
             }else{
-                dataUserLayer.getGenderAndAge(req.body.user_id, function(ret1){
+                dataUserLayer.getGenderAgeAndLanguage(req.body.user_id, function(ret1){
                     if(ret1.success){
-                        var geo = {
-                            lattitude : req.body.geo_lattitude,
-                            longitude : req.body.geo_longitude,
-                        }
-                        dataAudioLayer.addSample(filename, req.body.text, req.body.age, req.body.gender, req.body.geo_lattitude,req.body.geo_longitude,
+                        dataAudioLayer.addSample(filename, req.body.text, req.body.age, req.body.gender, req.body.geo_lattitude,req.body.geo_longitude, req.body.language,
                             function(ret){
                                 res.send(ret);
                         });
@@ -215,16 +211,16 @@ app.post('/api/sample/', function(req, res){
 /**
  * Obtient X enregistrements
  */
-app.get('/api/sample/:samples_number', function(req, res){
-    if(!req.params.samples_number){
+app.get('/api/sample/:samples_number/:language', function(req, res){
+    if(!req.params.samples_number || !req.params.language){
         res.send({
             success:false,
             error:{
-                name :'SAMPLES_NUMBER_IS_MISSING'
+                name :'SAMPLES_NUMBER_OR_LANGUAGE_IS_MISSING'
             }
         });
     }else{
-        dataAudioLayer.getSamples(req.params.samples_number, function(ret){
+        dataAudioLayer.getSamples(req.params.samples_number, req.params.language, function(ret){
             res.send(ret);
         });
     }

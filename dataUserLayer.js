@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 var uuidv4 = require("uuid/v4");
 
 
+
 mongoose.connect('mongodb://localhost/speech', function (err) {
     if(err){
         throw err;
@@ -21,7 +22,11 @@ var UserSchema = Schema({
         type: String,
         enum: ['M', 'F']
     },
-    age:Number
+    age:Number,
+    language: {
+        type: String,
+        enum: ["Afar","Abkhazian","Avestan","Afrikaans","Akan","Amharic","Aragonese","Arabic","Assamese","Avaric","Aymara","Azerbaijani","Bashkir","Belarusian","Bulgarian","Bihari languages","Bislama","Bambara","Bengali","Tibetan","Breton","Bosnian","Catalan; Valencian","Chechen","Chamorro","Corsican","Cree","Czech","Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic","Chuvash","Welsh","Danish","German","Divehi; Dhivehi; Maldivian","Dzongkha","Ewe","Greek, Modern (1453-)","English","Esperanto","Spanish; Castilian","Estonian","Basque","Persian","Fulah","Finnish","Fijian","Faroese","French","Western Frisian","Irish","Gaelic; Scottish Gaelic","Galician","Guarani","Gujarati","Manx","Hausa","Hebrew","Hindi","Hiri Motu","Croatian","Haitian; Haitian Creole","Hungarian","Armenian","Herero","Interlingua (International Auxiliary Language Association)","Indonesian","Interlingue; Occidental","Igbo","Sichuan Yi; Nuosu","Inupiaq","Ido","Icelandic","Italian","Inuktitut","Japanese","Javanese","Georgian","Kongo","Kikuyu; Gikuyu","Kuanyama; Kwanyama","Kazakh","Kalaallisut; Greenlandic","Central Khmer","Kannada","Korean","Kanuri","Kashmiri","Kurdish","Komi","Cornish","Kirghiz; Kyrgyz","Latin","Luxembourgish; Letzeburgesch","Ganda","Limburgan; Limburger; Limburgish","Lingala","Lao","Lithuanian","Luba-Katanga","Latvian","Malagasy","Marshallese","Maori","Macedonian","Malayalam","Mongolian","Marathi","Malay","Maltese","Burmese","Nauru","BokmÃ¥l, Norwegian; Norwegian BokmÃ¥l","Ndebele, North; North Ndebele","Nepali","Ndonga","Dutch; Flemish","Norwegian Nynorsk; Nynorsk, Norwegian","Norwegian","Ndebele, South; South Ndebele","Navajo; Navaho","Chichewa; Chewa; Nyanja","Occitan (post 1500); ProvenÃ§al","Ojibwa","Oromo","Oriya","Ossetian; Ossetic","Panjabi; Punjabi","Pali","Polish","Pushto; Pashto","Portuguese","Quechua","Romansh","Rundi","Romanian; Moldavian; Moldovan","Russian","Kinyarwanda","Sanskrit","Sardinian","Sindhi","Northern Sami","Sango","Sinhala; Sinhalese","Slovak","Slovenian","Samoan","Shona","Somali","Albanian","Serbian","Swati","Sotho, Southern","Sundanese","Swedish","Swahili","Tamil","Telugu","Tajik","Thai","Tigrinya","Turkmen","Tagalog","Tswana","Tonga (Tonga Islands)","Turkish","Tsonga","Tatar","Twi","Tahitian","Uighur; Uyghur","Ukrainian","Urdu","Uzbek","Venda","Vietnamese","VolapÃ¼k","Walloon","Wolof","Xhosa","Yiddish","Yoruba","Zhuang; Chuang","Chinese","Zulu"],
+    }
 });
 
 //Init model
@@ -37,12 +42,13 @@ module.exports = {
      * @param {Number} age 
      * @param {CallableFunction} cb 
      */
-    addAccount: function(username, password, gender, age, cb){
+    addAccount: function(username, password, gender, age, language, cb){
         var userToAdd = new UserModel({
             username:username,
             password:password,
             gender:gender,
-            age:age
+            age:age,
+            language:language
         });
         userToAdd.save(function(err){
             if(err){
@@ -98,8 +104,8 @@ module.exports = {
      * @param {*} user_id 
      * @param {*} cb 
      */
-    getGenderAndAge: function(user_id, cb){
-        UserModel.findById(user_id,'gender age', function(err, ret){
+    getGenderAgeAndLanguage: function(user_id, cb){
+        UserModel.findById(user_id,'gender age language', function(err, ret){
             if(err){
                 throw err;
             }else{
