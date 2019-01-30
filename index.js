@@ -184,7 +184,7 @@ app.post('/api/sample/', function(req, res){
         var target_path = './audio/' + filename;
 
         console.log("HOP");
-        req.files.sample.mv(tmp_path , function(err) {
+        req.files.sample.mv(filename , function(err) {
             console.log("HOP");
             if(err){
                 console.log(err);
