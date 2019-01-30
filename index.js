@@ -184,44 +184,18 @@ app.post('/api/sample/', function(req, res){
         var tmp_path = './tmp/' + filename;
         var target_path = './audio/' + filename;
 
-        req.files.sample.mv(filename , function(err) {
+
+        req.files.sample.mv(tmp_path , function(err) {
             if(err){
                 console.log(err);
             }else{
-                dataUserLayer.getGenderAgeAndLanguage(req.body.user_id, function(ret1){
-                    if(ret1.success){
-                        // TODO : Compute SNR
-                        dataAudioLayer.addSample(filename, req.body.text, ret1.data.age, ret1.data.gender, 
-                                                req.body.geo_lattitude,req.body.geo_longitude, ret1.data.language,10,
-                            function(ret){
-                                res.send(ret);
-                        });
-                    }else{
-                        res.send({
-                            success:false,
-                            error:{
-                                name :'USER_NOT_FOUND',
-                                info: ret1
-                            }
-                        });
-                    }
-                })
-            }
-        });
-
-
-        /*
-        req.files.sample.mv(filename , function(err) {
-            if(err){
-                console.log(err);
-            }else{
-                ffmpeg.ffprobe(filename, function(err, metadata){
+                ffmpeg.ffprobe(tmp_path, function(err, metadata){
                     if(err){
                         console.log(err);
                     }
                     console.dir(metadata);
                     var duration = metadata.format.duration;
-                    ffmpeg(filename)
+                    ffmpeg(tmp_path)
                         // convert to mp3
                         .audioCodec('libmp3lame')
                         // setup event handlers
@@ -254,7 +228,7 @@ app.post('/api/sample/', function(req, res){
                 });
             }
        });
-       */
+       
     }
 })
 
