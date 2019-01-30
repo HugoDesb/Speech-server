@@ -191,9 +191,8 @@ app.post('/api/sample/', function(req, res){
                 dataUserLayer.getGenderAgeAndLanguage(req.body.user_id, function(ret1){
                     if(ret1.success){
                         // TODO : Compute SNR
-
                         dataAudioLayer.addSample(filename, req.body.text, ret1.data.age, ret1.data.gender, 
-                                                req.body.geo_lattitude,req.body.geo_longitude, ret1.data.language,
+                                                req.body.geo_lattitude,req.body.geo_longitude, ret1.data.language,10,
                             function(ret){
                                 res.send(ret);
                         });
