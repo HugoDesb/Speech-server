@@ -117,6 +117,24 @@ app.get('/api/sentence/:sentences_number/:language', function(req, res){
     }
 })
 
+/**
+ * Ajoute une phrase
+ */
+app.post('/api/sentence/', function(req, res){
+    if(!req.body.text || !req.body.language){
+        res.send({
+            success:false,
+            error:{
+                name :'A_PARAMETER_IS_MISSING'
+            }
+        });
+    }else{
+        dataSentenceLayer.addSentence(req.body.text, req.body.language, function(ret){
+            res.send(ret);
+        });
+    }
+})
+
 /***
  * =====================================================================================
  * 

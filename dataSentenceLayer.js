@@ -88,5 +88,30 @@ module.exports = {
         });
     },
 
+    /**
+     * Ajoute une phrase pour la langue précisée
+     * @param {*} text 
+     * @param {*} language 
+     * @param {*} cb 
+     */
+    addSentence : function(text, language, cb){
+        var sentence = new SentenceModel({
+            text:text,
+            language:language
+        });
+        sentence.save(function(err){
+            if(err){
+                cb({success: false,
+                    error : {
+                        name: "UKNOWN",
+                        info: err
+                    }
+                });
+            }else{
+                cb({success: true});
+            }
+        });
+    }
+
 
 };
