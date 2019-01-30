@@ -176,34 +176,56 @@ app.post('/api/sample/', function(req, res){
             }
         });
     }else{
+        
         // Get the temporary location of the file
         var tmp_path = req.files.sample.path;
         // Set where the file should actually exists - in this case it is in the "audio" directory.
-        var filename = 'sample-' + uuidv4() + '.wav'
+        var filename = 'sample-' + uuidv4() + '.mp3';
+        var tmp_path = './tmp/' + filename;
         var target_path = './audio/' + filename;
 
-        req.files.sample.mv(target_path , function(err) {
+        req.files.sample.mv(tmp_path , function(err) {
             if(err){
                 throw err;
             }else{
-                dataUserLayer.getGenderAgeAndLanguage(req.body.user_id, function(ret1){
-                    if(ret1.success){
-                        dataAudioLayer.addSample(filename, req.body.text, req.body.age, req.body.gender, req.body.geo_lattitude,req.body.geo_longitude, req.body.language,
-                            function(ret){
-                                res.send(ret);
-                        });
-                    }else{
-                        res.send({
-                            success:false,
-                            error:{
-                                name :'USER_NOT_FOUND',
-                                info: ret1
-                            }
-                        });
+                ffmpeg.ffprobe(tmp_path, function(err, metadata){
+                    if(err){
+                        console.log(err);
                     }
-                })
+                    var duration = metadata.format.duration;
+                
+                    ffmpeg(tmp_path)
+                        // convert to mp3
+                        .audioCodec('libmp3lame')
+                        // setup event handlers
+                        .on('end', function() {
+                            dataUserLayer.getGenderAgeAndLanguage(req.body.user_id, function(ret1){
+                                if(ret1.success){
+                                    // TODO : Compute SNR
+
+                                    dataAudioLayer.addSample(filename, req.body.text, ret1.data.age, ret1.data.gender, 
+                                                            req.body.geo_lattitude,req.body.geo_longitude, ret1.data.language, duration,
+                                        function(ret){
+                                            res.send(ret);
+                                    });
+                                }else{
+                                    res.send({
+                                        success:false,
+                                        error:{
+                                            name :'USER_NOT_FOUND',
+                                            info: ret1
+                                        }
+                                    });
+                                }
+                            })
+                        })
+                        .on('error', function(err) {
+                            console.log('an error happened: ' + err.message);
+                        })
+                        // save to file
+                        .save(target_path);
+                });
             }
-    
        });
     }
 })
@@ -244,5 +266,9 @@ app.get('/api/sample/download', function(req, res){
 
 
 ////////////////
-console.log("Server started port 8095");
+
+if(process.env.PORT !== undefined){
+    port= process.env.PORT;
+}
+console.log("Server started port " + port);
 app.listen(port);
