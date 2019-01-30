@@ -16,5 +16,16 @@
   "bugs": {
     "url": "https://github.com/HugoDesb/Speech-server/issues"
   },
-  "homepage": "https://github.com/HugoDesb/Speech-server#readme"
+  "homepage": "https://github.com/HugoDesb/Speech-server#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "express-fileupload": "^1.1.1-alpha.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs": "0.0.1-security",
+    "mongoose": "^5.4.7",
+    "mongoose-simple-random": "^0.4.1",
+    "path": "^0.12.7",
+    "uuid": "^3.3.2"
+  }
 }

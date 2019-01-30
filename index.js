@@ -180,9 +180,9 @@ app.post('/api/sample/', function(req, res){
         var tmp_path = req.files.sample.path;
         // Set where the file should actually exists - in this case it is in the "audio" directory.
         var filename = 'sample-' + uuidv4() + '.wav'
-        target_path = './audio/' + filename;
+        var target_path = './audio/' + filename;
 
-        req.files.sample.mv('./audio/' + filename , function(err) {
+        req.files.sample.mv(target_path , function(err) {
             if(err){
                 throw err;
             }else{
