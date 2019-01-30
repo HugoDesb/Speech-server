@@ -178,22 +178,25 @@ app.post('/api/sample/', function(req, res){
     }else{
         
         // Get the temporary location of the file
-        var tmp_path = req.files.sample.path;
         // Set where the file should actually exists - in this case it is in the "audio" directory.
         var filename = 'sample-' + uuidv4() + '.mp3';
         var tmp_path = './tmp/' + filename;
         var target_path = './audio/' + filename;
 
+        console.log("HOP");
         req.files.sample.mv(tmp_path , function(err) {
+            console.log("HOP");
             if(err){
                 throw err;
             }else{
+                console.log("HOP");
                 ffmpeg.ffprobe(tmp_path, function(err, metadata){
+                    console.log("HOP");
                     if(err){
                         console.log(err);
                     }
                     var duration = metadata.format.duration;
-                
+                    console.log("HOP");
                     ffmpeg(tmp_path)
                         // convert to mp3
                         .audioCodec('libmp3lame')
