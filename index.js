@@ -195,6 +195,7 @@ app.post('/api/sample/', function(req, res){
                     if(err){
                         console.log(err);
                     }
+                    console.dir(metadata);
                     var duration = metadata.format.duration;
                     console.log("HOP");
                     ffmpeg(filename)
