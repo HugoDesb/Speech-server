@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 //for generate GUID
 var uuidv4 = require("uuid/v4");
 
-
+//hop
 
 mongoose.connect('mongodb://devUser:bla1bla1@ds151461.mlab.com:51461/speech-server-polytech', function (err) {
     if(err){
